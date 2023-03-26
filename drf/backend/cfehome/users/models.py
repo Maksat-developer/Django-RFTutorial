@@ -1,23 +1,33 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.utils import timezone
-from users.managers import UserManager
+from .managers import UserManager
 
 
-from . import constants as user_constants
-
-
-class UserModel(AbstractUser):
+class UserModel(AbstractUser, PermissionsMixin):
     username = None
-    email = models.EmailField(unique=True, null=True, db_index=True)
-    is_active = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(default=timezone.now)
-    user_type = models.PositiveSmallIntegerField(
-        choices=user_constants.USER_TYPE_CHOICES)
+    email = models.EmailField(
+        unique=True,
+        null=True,
+        db_index=True,
+        verbose_name="Введите Email:")
+    first_name = models.CharField(max_length=100, verbose_name="Введите Имя:")
+    last_name = models.CharField(
+        max_length=100,
+        verbose_name="Введите Фамилию:")
+    address = models.CharField(max_length=100, verbose_name="Введите аддресс:")
+    date_joined = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="Дата верификации пользователя:")
 
-    REQUIRED_FIELDS = []
+    is_active = models.BooleanField(
+        default=False, verbose_name="Часть Персонала:")
+    is_staff = models.BooleanField(
+        default=False,
+        verbose_name="Активный пользователь:")
+
     USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     objects = UserManager()
 
@@ -34,15 +44,23 @@ class UserProfile(models.Model):
         UserModel,
         on_delete=models.CASCADE,
         primary_key=True,
-        related_name='user_profile')
-    phone = models.CharField(max_length=255, blank=True, null=True)
-    is_verified = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+        related_name='user_profile', verbose_name="Пользователь:")
+    phone = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="Телефонный номер:")
+    is_verified = models.BooleanField(
+        default=False, verbose_name="Верифицирован:")
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Дата создания профиля:")
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name="Дата обновления профиля:")
 
     class Meta:
-        verbose_name = 'Профиль пользователя'
-        verbose_name_plural = 'Профили пользователей'
+        verbose_name = 'Профиль пользователя:'
+        verbose_name_plural = 'Профили пользователей:'
 
     def __str__(self) -> str:
         return self.user.email

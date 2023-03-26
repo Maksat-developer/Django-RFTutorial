@@ -4,12 +4,14 @@ from .models import UserModel, UserProfile
 class UserModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = "__all__"
+        fields = ("email", 'password',)
 
 
-class UserProfileSerialier(serializers.ModelSerializer):
+class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = "__all__"
+        fields = "phone"
+
+
 
         
